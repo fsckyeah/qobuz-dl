@@ -241,6 +241,12 @@ class Download:
     def _get_filename_attr(artist, track_metadata, track_title):
         version = track_metadata.get("version", "")
         version_suffix = f" ({version})" if version and version.lower() not in track_title.lower() else ""
+    
+        disc_number = track_metadata.get("media_number", 1)
+        track_number = track_metadata.get("track_number", 1)
+    
+        combined_number = f"{disc_number}.{track_number:02}"
+    
         return {
             "artist": artist,
             "albumartist": _safe_get(
@@ -251,8 +257,9 @@ class Download:
             "tracktitle": track_title,
             "version": version,
             "version_suffix": version_suffix,
-            "tracknumber": f"{track_metadata['track_number']:02}",
+            "tracknumber": combined_number,
         }
+
 
     @staticmethod
     def _get_track_attr(meta, track_title, bit_depth, sampling_rate):
