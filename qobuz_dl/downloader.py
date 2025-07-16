@@ -23,8 +23,8 @@ DEFAULT_FORMATS = {
     ],
 }
 
-DEFAULT_FOLDER = "{artist} - {album} ({year}) [{bit_depth}B-{sampling_rate}kHz]"
-DEFAULT_TRACK = "{tracknumber}. {tracktitle}"
+DEFAULT_FOLDER = "{artist}/{album}/FLAC ({bit_depth}bit-{sampling_rate}kHz)"
+DEFAULT_TRACK = "{tracknumber} - {tracktitle}{version_suffix}"
 
 logger = logging.getLogger(__name__)
 
@@ -239,6 +239,8 @@ class Download:
 
     @staticmethod
     def _get_filename_attr(artist, track_metadata, track_title):
+        version = track_metadata.get("version", "")
+        version_suffix = f" ({version})" if version and version.lower() not in track_title.lower() else ""
         return {
             "artist": artist,
             "albumartist": _safe_get(
@@ -247,7 +249,8 @@ class Download:
             "bit_depth": track_metadata["maximum_bit_depth"],
             "sampling_rate": track_metadata["maximum_sampling_rate"],
             "tracktitle": track_title,
-            "version": track_metadata.get("version"),
+            "version": version,
+            "version_suffix": version_suffix,
             "tracknumber": f"{track_metadata['track_number']:02}",
         }
 
